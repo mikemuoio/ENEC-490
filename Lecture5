@@ -1,0 +1,43 @@
+data = xlsread('HourlyBidData2014.xlsx');
+vec = mat2vec(data);
+gobbled_data = data_goblin(vec);
+processed_data = pre_processor(gobbled_data)
+
+%% The problematic data point is the 7322'nd element in the vector
+%% Considering the # of days & hours in each month in 2014, this data point
+%% corresponds to November 2nd at 2:00 AM
+
+%% while the hist plot and qqplot for the data indicated imperfect normality, the qqplot of
+%% the log-transformed data was slightly less linear, proving that a logarithmic transformation
+%% is not useful in this case.
+
+%% the single weird data point would not be identified by a min/max 40filter, b/c while the data point
+%% is an outlier in the context of neighboring data points in Oct-Dec, the data point is still less extreme
+%% than the 4048'th data point that occurs in June.
+
+
+  dev = std(processed_data);  %%find std and mean
+  avg = mean(processed_data);
+  
+  deviations = ((processed_data(7322)) - avg)/dev  %% = 3.19 std deviations
+
+%% It doesn't make sense to do a statistical outlier test for the entire year, b/c the data point
+%% is not an outlier for the whole year, but just for the season in which the error occurred.
+
+  dev_2 = std(processed_data(7297:8015));  %%find std and mean
+  avg_2 = mean(processed_data(7297:8015));
+  
+  deviations_2 = ((processed_data(7322)) - avg_2)/dev_2  %% = 5.09 std deviations
+  
+  
+  peak_demand = zeros(365,1);
+  x = 1;
+  for i = 1:365
+      peak_demand(i) = max(processed_data(x:x+23))
+      x = x+24;
+  end
+  
+  %% There is a clear U-shaped pattern to the scatter plot, indicating that
+  %% electricity demand drops significantly around 62 degrees; and increases
+  %% at temperatures both above and below this point -- rising most sharply for 
+  %% temperatures above 73 degrees.
