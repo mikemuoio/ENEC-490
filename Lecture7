@@ -66,7 +66,7 @@ for i = 1:(length(num2015_C)-1)
 end
 
 %% Create new matrix "D" with retired generator data
-D = setdiff(num2012_C,num2015_C,'rows');
+D = setdiff(num2012_C,num2015_C,'rows'); %wow this is a great idea
 
 %% Add "D" data to bins and overlay bar graph
 years = 1925:1:2012;
