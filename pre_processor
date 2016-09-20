@@ -1,0 +1,55 @@
+function [processed_data] = pre_processor(gobbled_data)
+
+    %gobbled_data(isnan(gobbled_data)) = [];
+    
+    for i = 1:length(gobbled_data)
+    
+        if (gobbled_data(i) == 0) && (gobbled_data(i+1) == 0)
+            
+            gobbled_data(i+1) = mean([gobbled_data(i-1) gobbled_data(i+2)]);
+            
+        end
+        
+        
+    
+    end
+
+for i = 1:length(gobbled_data)
+    
+    
+    if gobbled_data(i) < 1
+        
+        gobbled_data(i) = mean([gobbled_data(i-1) gobbled_data(i+1)]);
+        
+    elseif gobbled_data(i) > 200000
+        
+            if gobbled_data(i+1) < 1
+                gobbled_data(i) = mean([gobbled_data(i-1) gobbled_data(i+2)]);
+            else
+                gobbled_data(i) = mean([gobbled_data(i-1) gobbled_data(i+1)]);
+            end
+    end
+
+
+end
+
+%
+for i = 1:length(gobbled_data)
+    
+    
+    if isnan(gobbled_data(i))
+        
+        gobbled_data(i) = mean([gobbled_data(i-1) gobbled_data(i+1)]);
+        
+    end
+
+
+end
+
+%
+
+processed_data = gobbled_data;
+
+
+    
+end
