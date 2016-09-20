@@ -1,0 +1,86 @@
+%Lecture 7
+
+[num2012 char2012 combined2012] = xlsread('Lec7Data_2012.xlsx');
+[num2015 char2015 combined2015] = xlsread('Lec7Data_2015.xlsx');
+
+years = 1925:1:2012;
+bins = zeros(length(years),1);
+
+for i = 1:length(num2012)
+    
+    yr = num2012(i,5);
+    bin_ID = find(years==yr);
+    bins(bin_ID) = bins(bin_ID) + num2012(i,4);
+    
+end
+
+bar(bins,'FaceColor', [.8 .8 .8], 'EdgeColor', [.7 .7 .7], 'LineWidth', .01);
+
+ax=gca;
+ax.XTick=([1 11 21 31 41 51 61 71 81]);
+ax.XTickLabel=({'1925','1935','1945','1955','1965','1975','1985','1995','2005c'});
+xlabel('Year');
+ylabel('Capacity (MW)');
+set(ax,'FontSize',12)
+
+num2012_C = num2012;
+num2012_C(:,3) = [];
+num2015_C = num2015;
+num2015_C(:,3) = [];
+
+%% Assign a new Generator ID Column that can be compared
+GenID = 1;
+for i = 1:(length(num2012_C)-1)
+    if num2012_C(i,1:2) == num2012_C(i+1,1:2)
+        num2012_C(i,5) = GenID;
+        GenID = GenID + 1;
+    else num2012_C(i,5) = GenID;
+         GenID = 1;
+    end
+    
+    if num2012_C(length(num2012_C)) == num2012_C((length(num2012_C)-1))
+        num2012_C((length(num2012_C)),5) = 2;
+    else
+        num2012_C((length(num2012_C)),5) = 1;
+        
+    end
+    
+end
+
+GenID = 1;
+for i = 1:(length(num2015_C)-1)
+    if num2015_C(i,1:2) == num2015_C(i+1,1:2)
+        num2015_C(i,5) = GenID;
+        GenID = GenID + 1;
+    else num2015_C(i,5) = GenID;
+         GenID = 1;
+    end
+    
+    if num2015_C(length(num2015_C)) == num2015_C((length(num2015_C)-1))
+        num2015_C((length(num2015_C)),5) = 2;
+    else
+        num2015_C((length(num2015_C)),5) = 1;
+        
+    end
+    
+end
+
+%% Create new matrix "D" with retired generator data
+%C = intersect(num2012_C,num2015_C,'rows');
+D = setdiff(num2012_C,num2015_C,'rows');
+
+%% Add "D" data to bins and overlay bar graph
+years = 1925:1:2012;
+bins_2 = zeros(length(years),1);
+
+for i = 1:length(D)
+    
+    yr = D(i,4);
+    bin2_ID = find(years==yr);
+    bins_2(bin2_ID) = bins_2(bin2_ID) + D(i,3);
+    
+end
+
+hold on
+bar(bins_2,'FaceColor', [.0 .0 .8], 'EdgeColor', [.0 .0 .7], 'LineWidth',.01)
+legend('In Operation','Retired Since 2012')
