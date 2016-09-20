@@ -1,0 +1,19 @@
+function [ vector ] = mat2vec ( data )
+
+[rows,columns] = size(data);
+number = numel(data);
+vector = zeros(number,1);
+spot = 1;
+    
+    for i = 1:rows
+        
+        for j = 1:columns
+            
+            vector(spot) = data(i,j);
+            spot = spot + 1;
+            
+        end
+        
+    end
+
+end
